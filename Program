@@ -1,0 +1,113 @@
+import java.util.*;
+public class SudokuSolver
+{
+    private static final int S = 9;
+    public static void main(String[] args)
+    {
+        int[][] grid = new int[S][S];
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Enter the Sudoku puzzle row by row, use 0 for empty cells:");
+        for (int i = 0; i < S; i++)
+        {
+            System.out.print("Row " + (i + 1) + ": ");
+            for (int j = 0; j < S; j++)
+            {
+                grid[i][j] = sc.nextInt();
+            }
+        }
+        if (solveSudoku(grid))
+        {
+            System.out.println("Sudoku puzzle solved:");
+            printGrid(grid);
+        } else
+        {
+            System.out.println("No solution exists for the given Sudoku puzzle.");
+        }
+    }
+    private static boolean solveSudoku(int[][] grid)
+    {
+        int row = 0;
+        int col = 0;
+        boolean isEmpty = true;
+        for (int i = 0; i < S && isEmpty; i++)
+        {
+            for (int j = 0; j < S && isEmpty; j++)
+            {
+                if (grid[i][j] == 0)
+                {
+                    row = i;
+                    col = j;
+                    isEmpty = false;
+                }
+            }
+        }
+        if (isEmpty)
+        {
+            return true;
+        }
+        for (int num = 1; num <= S; num++)
+        {
+            if (isValidMove(grid, row, col, num))
+            {
+                grid[row][col] = num;
+                if (solveSudoku(grid))
+                {
+                    return true;
+                }
+                grid[row][col] = 0;
+            }
+        }
+        return false;
+    }
+    private static boolean isValidMove(int[][] grid, int row, int col, int num)
+    {
+        return !usedInRow(grid, row, num) && !usedInCol(grid, col, num) && !usedInBox(grid, row - row % 3, col - col % 3, num);
+    }
+    private static boolean usedInRow(int[][] grid, int row, int num)
+    {
+        for (int col = 0; col < S; col++)
+        {
+            if (grid[row][col] == num)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    private static boolean usedInCol(int[][] grid, int col, int num)
+    {
+        for (int row = 0; row < S; row++)
+        {
+            if (grid[row][col] == num)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    private static boolean usedInBox(int[][] grid, int startRow, int startCol, int num)
+    {
+        for (int row = 0; row < 3; row++)
+        {
+            for (int col = 0; col < 3; col++)
+            {
+                if (grid[row + startRow][col + startCol] == num)
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    private static void printGrid(int[][] grid)
+    {
+        for (int i = 0; i < S; i++)
+        {
+            for (int j = 0; j < S; j++)
+            {
+                System.out.print(grid[i][j] + " ");
+            }
+            System.out.println();
+        }
+    }
+}
